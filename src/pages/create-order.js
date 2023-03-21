@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useGetUserID } from "../hooks/useGetUserID";
+import { useNavigate } from "react-router-dom";
 
 export const CreateOrder = () => {
 
@@ -16,6 +17,8 @@ export const CreateOrder = () => {
         userOwner: userID,
     });
 
+    const navigate = useNavigate();
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setOption({ ...option, [name]: value })
@@ -26,10 +29,12 @@ export const CreateOrder = () => {
         try {
             await axios.post("http://localhost:3001/options", option);
             alert("Order Created!");
+            navigate("/");
         } catch (err) {
             console.error(err);
         }
-    }
+    };
+
     return (
         <div className="create-order">
             <h2> Create Order </h2>

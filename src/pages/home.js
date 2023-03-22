@@ -10,18 +10,28 @@ export const Home = () => {
         const fetchOption = async () => {
             try {
                 const response = await axios.get("http://localhost:3001/options");
+                
+                // Update the 'options' state variable with the response data
                 setOptions(response.data);
 
-                const symbolArray = response.data.map(obj => obj.symbol);
-                console.log(symbolArray);
-                const markRequests = symbolArray.map(symbol => axios.get(`http://127.0.0.1:8000/stock/${symbol}`));
+                // Extract the symbols from the option data and store them in an array
+                const symbolArray = response.data.map((obj) => obj.symbol);
+
+                // Create an array of requests to retrieve stock data for each symbol using the 'map' function
+                const markRequests = symbolArray.map((symbol) =>
+                  axios.get(`http://127.0.0.1:8000/stock/${symbol}`)
+                );
+                // Wait for all the requests to complete using the 'Promise.all' function
                 const markResponses = await Promise.all(markRequests);
 
+                // Create a new object to store the marks for each symbol
                 const newMarks = {};
+                // Iterate over the mark responses and extract the mark value for each symbol
                 markResponses.forEach((response, index) => {
-                    const symbol = symbolArray[index];
-                    newMarks[symbol] = response.data.mark;
+                  const symbol = symbolArray[index];
+                  newMarks[symbol] = response.data.mark;
                 });
+                // Update the 'marks' state variable with the new marks object
                 setMarks(newMarks);
             } catch (err) {
                 console.error(err);
